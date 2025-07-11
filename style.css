@@ -1,177 +1,175 @@
-*{
-  margin:0;
+* {
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* font-family: 'Gill Sans','Gills Sans MT',Calibri,'Trebuchet MS',sans-serif; */
 }
 
-body{
+body {
   width: 100%;
   height: 100vh;
-  background-color: rgb(45,52,59);
+  background-color: rgb(45, 52, 59);
 }
 
-html{
+html {
   width: 100%;
   height: 100vh;
 }
 
-header{
+header {
   width: 100%;
   height: 20%;
-  background-color: rgb(45,52,59);
+  background-color: rgb(45, 52, 59);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:20px;
+  gap: 20px;
 }
 
-header h1{
+header h1 {
   color: white;
   font-size: 40px;
   font-weight: 600;
 }
 
-header img{
+header img {
   width: 100px;
   height: 100px;
   border-radius: 50%;
   box-shadow: 2px 2px 10px black;
 }
 
-header button{
+header button {
   width: 100px;
   height: 100px;
   border-radius: 50%;
   background-color: black;
-  border:none;
+  border: none;
   box-shadow: 2px 2px 10px black;
   cursor: pointer;
   transition: all 0.5s;
 }
 
-header button:hover{
+header button:hover {
   background-color: rgba(0, 0, 0, 0.275);
 }
 
-.chat-container{
+.chat-container {
   width: 100%;
   height: 80%;
   background-color: rgb(217, 231, 233);
- padding: 20px;
- display: flex;
- flex-direction: column;
- gap:20px;
- font-size: 20px;
- overflow:auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 20px;
+  overflow: auto;
 }
 
-.user-chatbox{
+.user-chatbox {
   width: 60%;
   position: relative;
-  left:40%;
+  left: 40%;
 }
 
-.ai-chatbox{
+.ai-chatbox {
   width: 60%;
   position: relative;
 }
 
-.user-chat-area{
+.user-chat-area {
   width: 90%;
   padding: 20px;
   background-color: rgb(59, 93, 202);
-  color:white;
+  color: white;
   border-radius: 40px 0px 40px 40px;
   box-shadow: 2px 2px 10px black;
   display: flex;
-  gap:10px;
+  gap: 10px;
   flex-direction: column;
 }
 
-.chooseimg{
+.chooseimg {
   width: 30%;
   border-radius: 30px;
 }
 
-.ai-chat-area{
+.ai-chat-area {
   width: 90%;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.371);
   position: relative;
-  left:10%;
-  color:white;
+  left: 10%;
+  color: white;
   border-radius: 0px 40px 40px 40px;
   box-shadow: 2px 2px 10px black;
 }
 
-#userImage{
+#userImage {
   position: absolute;
-  right:0;
-  filter:drop-shadow(2px 2px 10px rgb(22, 2, 2));
+  right: 0;
+  filter: drop-shadow(2px 2px 10px rgb(22, 2, 2));
 }
 
-#aiImage{
-  position:absolute;
-  left:0;
-  filter:drop-shadow(2px 2px 10px black);
+#aiImage {
+  position: absolute;
+  left: 0;
+  filter: drop-shadow(2px 2px 10px black);
 }
 
-.prompt-area{
-  width:100%;
+.prompt-area {
+  width: 100%;
   height: 20%;
-  background-color: rgb(45,52,59);
+  background-color: rgb(45, 52, 59);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:10px;
+  gap: 10px;
 }
 
-.prompt-area input{
+.prompt-area input {
   width: 50%;
   height: 80px;
   background-color: black;
-  outline:none;
+  outline: none;
   border: none;
   border-radius: 50px;
   padding: 20px;
-  color:rgb(252, 241, 241);
+  color: rgb(252, 241, 241);
   font-size: 20px;
   box-shadow: 2px 2px 10px black;
 }
 
-.prompt-area input:focus{
+.prompt-area input:focus {
   background-color: rgba(0, 0, 0, 0.275);
 }
 
-.prompt-area button{
+.prompt-area button {
   width: 70px;
   height: 70px;
   border-radius: 50%;
   background-color: black;
-  border:none;
+  border: none;
   box-shadow: 2px 2px 10px black;
   cursor: pointer;
   transition: all 0.5s;
 }
 
-.prompt-area button:hover{
+.prompt-area button:hover {
   background-color: rgba(0, 0, 0, 0.275);
 }
 
-.load{
-  filter:drop-shadow(2px 2px 10px black); 
+.load {
+  filter: drop-shadow(2px 2px 10px black);
 }
 
-.choose{
+.choose {
   width: 50px;
   height: 50px;
   border-radius: 50%;
 }
 
-#image{
-  display:flex;
+#image {
+  display: flex;
   align-items: center;
   justify-content: center;
 }
-
