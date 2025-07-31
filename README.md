@@ -1,1 +1,1 @@
-This is My Project URL : https://thechatbot-ai.netlify.app
+This is My Project URL : https://mychatbot-ai.netlify.app
