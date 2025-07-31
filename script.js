@@ -1,122 +1,162 @@
-let prompt = document.querySelector("#prompt");
-let chatcontainer = document.querySelector(".chat-container");
-let imagebtn = document.querySelector("#image");
-let imageinput = document.querySelector("#image input");
-let image = document.querySelector("#image img");
-const Api_Url =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyD9LLvMc-eSy1uvKRmUSfnclJmo0i6OWgA";
+const userPromptInput = document.getElementById("user-prompt");
+const chatContainer = document.getElementById("chat-container");
+const attachImageButton = document.querySelector(".attach-image-button");
+const imageFileInput = attachImageButton.querySelector("input[type='file']");
+const imageButtonIcon = attachImageButton.querySelector("img");
+const sendMessageButton = document.querySelector(".send-message-button");
 
-let user = {
-  message: null,
+const API_KEY = "AIzaSyC4CWtQJ2FJ6FYMxmxGYjSvPwMavtgIrcA";
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+let userMessageData = {
+  text: null,
   file: {
     mime_type: null,
     data: null,
   },
 };
 
-async function generateResponse(aiChatBox) {
-  let text = aiChatBox.querySelector(".ai-chat-area");
+function createChatMessageElement(htmlContent, classNames) {
+  const messageDiv = document.createElement("div");
+  messageDiv.innerHTML = htmlContent;
+  messageDiv.className = `message ${classNames}`;
+  return messageDiv;
+}
 
-  let RequestOption = {
+function showBotTypingIndicator() {
+  const html = `
+    <img src="pngtree-artificial-intelligence-technology-robot-ai-vector-png-image_13223482.png" alt="AI Assistant Avatar" class="message-avatar">
+    <div class="message-content" id="typing-indicator">
+      <span class="load"></span><span style="margin-left:15px;">Bot is typing...</span>
+    </div>
+  `;
+  const aiChatBox = createChatMessageElement(html, "ai-message");
+  chatContainer.appendChild(aiChatBox);
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
+    behavior: "smooth",
+  });
+  return aiChatBox;
+}
+
+async function generateAIResponse(aiChatBoxElement) {
+  const messageContentElement = aiChatBoxElement.querySelector(".message-content");
+
+  const requestBody = {
+    contents: [
+      {
+        parts: [{ text: userMessageData.text }],
+      },
+    ],
+  };
+
+  if (userMessageData.file.data) {
+    requestBody.contents[0].parts.push({ inline_data: userMessageData.file });
+  }
+
+  const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            { text: user.message },
-            user.file.data ? [{ inline_data: user.file }] : [],
-          ],
-        },
-      ],
-    }),
+    body: JSON.stringify(requestBody),
   };
 
   try {
-    let response = await fetch(Api_Url, RequestOption);
-    let data = await response.json();
-    let apiResponse = data.candidates[0].content.parts[0].text.trim();
+    const response = await fetch(API_URL, requestOptions);
 
-    text.innerHTML = apiResponse;
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error:", errorData);
+      throw new Error(
+        `HTTP error! Status: ${response.status} - ${
+          errorData.error?.message || "Unknown error"
+        }`
+      );
+    }
+
+    const data = await response.json();
+    const apiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+    if (apiResponse) {
+      messageContentElement.innerHTML = apiResponse;
+    } else {
+      messageContentElement.innerHTML =
+        "<span style='color:red;'>No valid response from AI.</span>";
+      console.warn("AI response was empty or malformed:", data);
+    }
   } catch (error) {
-    console.log(error);
+    messageContentElement.innerHTML =
+      "<span style='color:red;'>Something went wrong! Please try again.</span>";
+    console.error("Error generating AI response:", error);
   } finally {
-    chatcontainer.scrollTo({
-      top: chatcontainer.scrollHeight,
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight,
       behavior: "smooth",
     });
-    image.src = `img.svg`;
-    image.classList.remove("choose");
-    user.file = {};
+    imageButtonIcon.src = `img.svg`;
+    imageButtonIcon.classList.remove("choose");
+    userMessageData.file = { mime_type: null, data: null };
   }
 }
 
-function createChatBox(html, classes) {
-  let div = document.createElement("div");
-  div.innerHTML = html;
-  div.classList.add(classes);
-  return div;
-}
+function handleUserMessage(messageText) {
+  userMessageData.text = messageText;
 
-function handlechatResponse(userMessage) {
-  user.message = userMessage;
-  let html = `<img src="OIP.jpg" alt="" id="userImage" width="10%">
-    <div class="user-chat-area">
-     ${user.message}
-     ${
-       user.file.data
-         ? `<img src="data:${user.file.mime_type};base64,${user.file.data}" class="chooseimg" />`
-         : ""
-     }
+  let userHtml = `
+    <img src="OIP.jpg" alt="User Avatar" class="message-avatar">
+    <div class="message-content">
+      ${userMessageData.text}
+      ${
+        userMessageData.file.data
+          ? `<img src="data:${userMessageData.file.mime_type};base64,${userMessageData.file.data}" class="attached-image" alt="Attached image" />`
+          : ""
+      }
+    </div>
+  `;
 
-    </div>`;
-  prompt.value = "";
-
-  let userChatBox = createChatBox(html, "user-chatbox");
-  chatcontainer.appendChild(userChatBox);
-  chatcontainer.scrollTo({
-    top: chatcontainer.scrollHeight,
+  userPromptInput.value = "";
+  const userChatBox = createChatMessageElement(userHtml, "user-message");
+  chatContainer.appendChild(userChatBox);
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
     behavior: "smooth",
   });
 
+  const aiTypingBox = showBotTypingIndicator();
   setTimeout(() => {
-    let html = `<img src="pngtree-artificial-intelligence-technology-robot-ai-vector-png-image_13223482.png" alt="" id="aiImage" width="13%">
-    <div class="ai-chat-area">
-     <img src="loading-bar-progress-icon-with-transparent-background-free-png.webp" alt="" class="load" width="50px">
-  </div>
-
-    </div>`;
-    let aiChatBox = createChatBox(html, "ai-chatbox");
-    chatcontainer.appendChild(aiChatBox);
-
-    generateResponse(aiChatBox);
+    generateAIResponse(aiTypingBox);
   }, 600);
 }
 
-prompt.addEventListener("keydown", (e) => {
-  if (e.key == "Enter") {
-    handlechatResponse(prompt.value);
+userPromptInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && userPromptInput.value.trim() !== "") {
+    e.preventDefault();
+    handleUserMessage(userPromptInput.value);
   }
 });
 
-imageinput.addEventListener("change", () => {
-  const file = imageinput.files[0];
+sendMessageButton.addEventListener("click", () => {
+  if (userPromptInput.value.trim() !== "") {
+    handleUserMessage(userPromptInput.value);
+  }
+});
+
+imageFileInput.addEventListener("change", () => {
+  const file = imageFileInput.files[0];
   if (!file) return;
-  let reader = new FileReader();
+
+  const reader = new FileReader();
   reader.onload = (e) => {
-    // console.log(e)
-    let base64string = e.target.result.split(",")[1];
-    user.file = {
+    const base64string = e.target.result.split(",")[1];
+    userMessageData.file = {
       mime_type: file.type,
       data: base64string,
     };
-    image.src = `data:${user.file.mime_type};base64,${user.file.data}`;
-    image.classList.add("choose");
+    imageButtonIcon.src = `data:${userMessageData.file.mime_type};base64,${userMessageData.file.data}`;
+    imageButtonIcon.classList.add("choose");
   };
-
   reader.readAsDataURL(file);
 });
 
-imagebtn.addEventListener("click", () => {
-  imagebtn.querySelector("input").click();
+attachImageButton.addEventListener("click", () => {
+  imageFileInput.click();
 });
